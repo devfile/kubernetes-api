@@ -52,6 +52,67 @@ spec:
               description: Structure of the workspace. This is also the specification
                 of a workspace template.
               properties:
+                buildGuidances:
+                  description: List of the build guidances which provide guidance
+                    on how images should be built.
+                  items:
+                    properties:
+                      buildGuidanceType:
+                        description: Type of build guidance
+                        enum:
+                        - Dockerfile
+                        - SourceToImage
+                        type: string
+                      dockerfile:
+                        description: Allows specifying a dockerfile to initiate build
+                        properties:
+                          buildContext:
+                            description: Path of source directory to establish build
+                              context.  Default to the top level directory.
+                            type: string
+                          dockerfileLocation:
+                            description: Dockerfile location which can be an URL or
+                              a path relative to buildContext
+                            type: string
+                          rootless:
+                            description: Optional flag that specifies whether unprivileged
+                              builder pod is required.  Default is false.
+                            type: boolean
+                        required:
+                        - dockerfileLocation
+                        type: object
+                      name:
+                        description: Mandatory name that allows referencing the buid
+                          guidance from other elements or from an external devfile
+                          that may reference this build guidance through a parent
+                          or a plugin.
+                        type: string
+                      s2i:
+                        description: Allows specifying a builder image to initiate
+                          s2i (SourceToImage) build
+                        properties:
+                          builderImageNamespace:
+                            description: Namespace where builder image is present
+                            type: string
+                          builderImageStreamTag:
+                            description: Builder image name with tag
+                            type: string
+                          incrementalBuild:
+                            description: Flag that indicates whether to perform incremental
+                              builds or no
+                            type: boolean
+                          scriptLocation:
+                            description: Script URL to override default scripts provided
+                              by builder image
+                            type: string
+                        required:
+                        - builderImageNamespace
+                        - builderImageStreamTag
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  type: array
                 commands:
                   description: Predefined, ready-to-use, workspace-related commands
                   items:
@@ -729,6 +790,70 @@ spec:
                           either YAML files following the devfile syntax, or as `DevWorkspaceTemplate`
                           Kubernetes Custom Resources"
                         properties:
+                          buildGuidances:
+                            description: List of the build guidances which provide
+                              guidance on how images should be built.
+                            items:
+                              properties:
+                                buildGuidanceType:
+                                  description: Type of build guidance
+                                  enum:
+                                  - Dockerfile
+                                  - SourceToImage
+                                  type: string
+                                dockerfile:
+                                  description: Allows specifying a dockerfile to initiate
+                                    build
+                                  properties:
+                                    buildContext:
+                                      description: Path of source directory to establish
+                                        build context.  Default to the top level directory.
+                                      type: string
+                                    dockerfileLocation:
+                                      description: Dockerfile location which can be
+                                        an URL or a path relative to buildContext
+                                      type: string
+                                    rootless:
+                                      description: Optional flag that specifies whether
+                                        unprivileged builder pod is required.  Default
+                                        is false.
+                                      type: boolean
+                                  required:
+                                  - dockerfileLocation
+                                  type: object
+                                name:
+                                  description: Mandatory name that allows referencing
+                                    the buid guidance from other elements or from
+                                    an external devfile that may reference this build
+                                    guidance through a parent or a plugin.
+                                  type: string
+                                s2i:
+                                  description: Allows specifying a builder image to
+                                    initiate s2i (SourceToImage) build
+                                  properties:
+                                    builderImageNamespace:
+                                      description: Namespace where builder image is
+                                        present
+                                      type: string
+                                    builderImageStreamTag:
+                                      description: Builder image name with tag
+                                      type: string
+                                    incrementalBuild:
+                                      description: Flag that indicates whether to
+                                        perform incremental builds or no
+                                      type: boolean
+                                    scriptLocation:
+                                      description: Script URL to override default
+                                        scripts provided by builder image
+                                      type: string
+                                  required:
+                                  - builderImageNamespace
+                                  - builderImageStreamTag
+                                  type: object
+                              required:
+                              - name
+                              type: object
+                            type: array
                           commands:
                             description: Overrides of commands encapsulated in a parent
                               devfile or a plugin. Overriding is done using a strategic
@@ -1520,6 +1645,69 @@ spec:
                 parent:
                   description: Parent workspace template
                   properties:
+                    buildGuidances:
+                      description: List of the build guidances which provide guidance
+                        on how images should be built.
+                      items:
+                        properties:
+                          buildGuidanceType:
+                            description: Type of build guidance
+                            enum:
+                            - Dockerfile
+                            - SourceToImage
+                            type: string
+                          dockerfile:
+                            description: Allows specifying a dockerfile to initiate
+                              build
+                            properties:
+                              buildContext:
+                                description: Path of source directory to establish
+                                  build context.  Default to the top level directory.
+                                type: string
+                              dockerfileLocation:
+                                description: Dockerfile location which can be an URL
+                                  or a path relative to buildContext
+                                type: string
+                              rootless:
+                                description: Optional flag that specifies whether
+                                  unprivileged builder pod is required.  Default is
+                                  false.
+                                type: boolean
+                            required:
+                            - dockerfileLocation
+                            type: object
+                          name:
+                            description: Mandatory name that allows referencing the
+                              buid guidance from other elements or from an external
+                              devfile that may reference this build guidance through
+                              a parent or a plugin.
+                            type: string
+                          s2i:
+                            description: Allows specifying a builder image to initiate
+                              s2i (SourceToImage) build
+                            properties:
+                              builderImageNamespace:
+                                description: Namespace where builder image is present
+                                type: string
+                              builderImageStreamTag:
+                                description: Builder image name with tag
+                                type: string
+                              incrementalBuild:
+                                description: Flag that indicates whether to perform
+                                  incremental builds or no
+                                type: boolean
+                              scriptLocation:
+                                description: Script URL to override default scripts
+                                  provided by builder image
+                                type: string
+                            required:
+                            - builderImageNamespace
+                            - builderImageStreamTag
+                            type: object
+                        required:
+                        - name
+                        type: object
+                      type: array
                     commands:
                       description: Overrides of commands encapsulated in a parent
                         devfile or a plugin. Overriding is done using a strategic
@@ -2228,6 +2416,71 @@ spec:
                               syntax, or as `DevWorkspaceTemplate` Kubernetes Custom
                               Resources"
                             properties:
+                              buildGuidances:
+                                description: List of the build guidances which provide
+                                  guidance on how images should be built.
+                                items:
+                                  properties:
+                                    buildGuidanceType:
+                                      description: Type of build guidance
+                                      enum:
+                                      - Dockerfile
+                                      - SourceToImage
+                                      type: string
+                                    dockerfile:
+                                      description: Allows specifying a dockerfile
+                                        to initiate build
+                                      properties:
+                                        buildContext:
+                                          description: Path of source directory to
+                                            establish build context.  Default to the
+                                            top level directory.
+                                          type: string
+                                        dockerfileLocation:
+                                          description: Dockerfile location which can
+                                            be an URL or a path relative to buildContext
+                                          type: string
+                                        rootless:
+                                          description: Optional flag that specifies
+                                            whether unprivileged builder pod is required.  Default
+                                            is false.
+                                          type: boolean
+                                      required:
+                                      - dockerfileLocation
+                                      type: object
+                                    name:
+                                      description: Mandatory name that allows referencing
+                                        the buid guidance from other elements or from
+                                        an external devfile that may reference this
+                                        build guidance through a parent or a plugin.
+                                      type: string
+                                    s2i:
+                                      description: Allows specifying a builder image
+                                        to initiate s2i (SourceToImage) build
+                                      properties:
+                                        builderImageNamespace:
+                                          description: Namespace where builder image
+                                            is present
+                                          type: string
+                                        builderImageStreamTag:
+                                          description: Builder image name with tag
+                                          type: string
+                                        incrementalBuild:
+                                          description: Flag that indicates whether
+                                            to perform incremental builds or no
+                                          type: boolean
+                                        scriptLocation:
+                                          description: Script URL to override default
+                                            scripts provided by builder image
+                                          type: string
+                                      required:
+                                      - builderImageNamespace
+                                      - builderImageStreamTag
+                                      type: object
+                                  required:
+                                  - name
+                                  type: object
+                                type: array
                               commands:
                                 description: Overrides of commands encapsulated in
                                   a parent devfile or a plugin. Overriding is done
@@ -3036,6 +3289,67 @@ spec:
                         devfile. Overriding is done using a strategic merge patch.
                       items:
                         properties:
+                          buildGuidance:
+                            description: Build guidance to build this project
+                            properties:
+                              buildGuidanceType:
+                                description: Type of build guidance
+                                enum:
+                                - Dockerfile
+                                - SourceToImage
+                                type: string
+                              dockerfile:
+                                description: Allows specifying a dockerfile to initiate
+                                  build
+                                properties:
+                                  buildContext:
+                                    description: Path of source directory to establish
+                                      build context.  Default to the top level directory.
+                                    type: string
+                                  dockerfileLocation:
+                                    description: Dockerfile location which can be
+                                      an URL or a path relative to buildContext
+                                    type: string
+                                  rootless:
+                                    description: Optional flag that specifies whether
+                                      unprivileged builder pod is required.  Default
+                                      is false.
+                                    type: boolean
+                                required:
+                                - dockerfileLocation
+                                type: object
+                              name:
+                                description: Mandatory name that allows referencing
+                                  the buid guidance from other elements or from an
+                                  external devfile that may reference this build guidance
+                                  through a parent or a plugin.
+                                type: string
+                              s2i:
+                                description: Allows specifying a builder image to
+                                  initiate s2i (SourceToImage) build
+                                properties:
+                                  builderImageNamespace:
+                                    description: Namespace where builder image is
+                                      present
+                                    type: string
+                                  builderImageStreamTag:
+                                    description: Builder image name with tag
+                                    type: string
+                                  incrementalBuild:
+                                    description: Flag that indicates whether to perform
+                                      incremental builds or no
+                                    type: boolean
+                                  scriptLocation:
+                                    description: Script URL to override default scripts
+                                      provided by builder image
+                                    type: string
+                                required:
+                                - builderImageNamespace
+                                - builderImageStreamTag
+                                type: object
+                            required:
+                            - name
+                            type: object
                           clonePath:
                             description: Path relative to the root of the projects
                               to which this project should be cloned into. This is
@@ -3156,6 +3470,67 @@ spec:
                         patch.
                       items:
                         properties:
+                          buildGuidance:
+                            description: Build guidance to build this project
+                            properties:
+                              buildGuidanceType:
+                                description: Type of build guidance
+                                enum:
+                                - Dockerfile
+                                - SourceToImage
+                                type: string
+                              dockerfile:
+                                description: Allows specifying a dockerfile to initiate
+                                  build
+                                properties:
+                                  buildContext:
+                                    description: Path of source directory to establish
+                                      build context.  Default to the top level directory.
+                                    type: string
+                                  dockerfileLocation:
+                                    description: Dockerfile location which can be
+                                      an URL or a path relative to buildContext
+                                    type: string
+                                  rootless:
+                                    description: Optional flag that specifies whether
+                                      unprivileged builder pod is required.  Default
+                                      is false.
+                                    type: boolean
+                                required:
+                                - dockerfileLocation
+                                type: object
+                              name:
+                                description: Mandatory name that allows referencing
+                                  the buid guidance from other elements or from an
+                                  external devfile that may reference this build guidance
+                                  through a parent or a plugin.
+                                type: string
+                              s2i:
+                                description: Allows specifying a builder image to
+                                  initiate s2i (SourceToImage) build
+                                properties:
+                                  builderImageNamespace:
+                                    description: Namespace where builder image is
+                                      present
+                                    type: string
+                                  builderImageStreamTag:
+                                    description: Builder image name with tag
+                                    type: string
+                                  incrementalBuild:
+                                    description: Flag that indicates whether to perform
+                                      incremental builds or no
+                                    type: boolean
+                                  scriptLocation:
+                                    description: Script URL to override default scripts
+                                      provided by builder image
+                                    type: string
+                                required:
+                                - builderImageNamespace
+                                - builderImageStreamTag
+                                type: object
+                            required:
+                            - name
+                            type: object
                           clonePath:
                             description: Path relative to the root of the projects
                               to which this project should be cloned into. This is
@@ -3280,6 +3655,66 @@ spec:
                     and sources locations
                   items:
                     properties:
+                      buildGuidance:
+                        description: Build guidance to build this project
+                        properties:
+                          buildGuidanceType:
+                            description: Type of build guidance
+                            enum:
+                            - Dockerfile
+                            - SourceToImage
+                            type: string
+                          dockerfile:
+                            description: Allows specifying a dockerfile to initiate
+                              build
+                            properties:
+                              buildContext:
+                                description: Path of source directory to establish
+                                  build context.  Default to the top level directory.
+                                type: string
+                              dockerfileLocation:
+                                description: Dockerfile location which can be an URL
+                                  or a path relative to buildContext
+                                type: string
+                              rootless:
+                                description: Optional flag that specifies whether
+                                  unprivileged builder pod is required.  Default is
+                                  false.
+                                type: boolean
+                            required:
+                            - dockerfileLocation
+                            type: object
+                          name:
+                            description: Mandatory name that allows referencing the
+                              buid guidance from other elements or from an external
+                              devfile that may reference this build guidance through
+                              a parent or a plugin.
+                            type: string
+                          s2i:
+                            description: Allows specifying a builder image to initiate
+                              s2i (SourceToImage) build
+                            properties:
+                              builderImageNamespace:
+                                description: Namespace where builder image is present
+                                type: string
+                              builderImageStreamTag:
+                                description: Builder image name with tag
+                                type: string
+                              incrementalBuild:
+                                description: Flag that indicates whether to perform
+                                  incremental builds or no
+                                type: boolean
+                              scriptLocation:
+                                description: Script URL to override default scripts
+                                  provided by builder image
+                                type: string
+                            required:
+                            - builderImageNamespace
+                            - builderImageStreamTag
+                            type: object
+                        required:
+                        - name
+                        type: object
                       clonePath:
                         description: Path relative to the root of the projects to
                           which this project should be cloned into. This is a unix-style
@@ -3391,6 +3826,66 @@ spec:
                     starting point when bootstrapping new projects
                   items:
                     properties:
+                      buildGuidance:
+                        description: Build guidance to build this project
+                        properties:
+                          buildGuidanceType:
+                            description: Type of build guidance
+                            enum:
+                            - Dockerfile
+                            - SourceToImage
+                            type: string
+                          dockerfile:
+                            description: Allows specifying a dockerfile to initiate
+                              build
+                            properties:
+                              buildContext:
+                                description: Path of source directory to establish
+                                  build context.  Default to the top level directory.
+                                type: string
+                              dockerfileLocation:
+                                description: Dockerfile location which can be an URL
+                                  or a path relative to buildContext
+                                type: string
+                              rootless:
+                                description: Optional flag that specifies whether
+                                  unprivileged builder pod is required.  Default is
+                                  false.
+                                type: boolean
+                            required:
+                            - dockerfileLocation
+                            type: object
+                          name:
+                            description: Mandatory name that allows referencing the
+                              buid guidance from other elements or from an external
+                              devfile that may reference this build guidance through
+                              a parent or a plugin.
+                            type: string
+                          s2i:
+                            description: Allows specifying a builder image to initiate
+                              s2i (SourceToImage) build
+                            properties:
+                              builderImageNamespace:
+                                description: Namespace where builder image is present
+                                type: string
+                              builderImageStreamTag:
+                                description: Builder image name with tag
+                                type: string
+                              incrementalBuild:
+                                description: Flag that indicates whether to perform
+                                  incremental builds or no
+                                type: boolean
+                              scriptLocation:
+                                description: Script URL to override default scripts
+                                  provided by builder image
+                                type: string
+                            required:
+                            - builderImageNamespace
+                            - builderImageStreamTag
+                            type: object
+                        required:
+                        - name
+                        type: object
                       clonePath:
                         description: Path relative to the root of the projects to
                           which this project should be cloned into. This is a unix-style

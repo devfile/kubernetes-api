@@ -11,6 +11,10 @@ type Project struct {
 	ClonePath string `json:"clonePath,omitempty"`
 
 	ProjectSource `json:",inline"`
+
+	// Build guidance to build this project
+	// +optional
+	*BuildGuidance `json:"buildGuidance,omitempty"`
 }
 type StarterProject struct {
 	Project `json:",inline"`
